@@ -110,7 +110,8 @@ class WunderhornCLI {
         $this->_cli->write($this->_cli->_("cli_help_intro") . PHP_EOL);
 
         $this->_cli->write($this->_cli->_("cli_help_args"));
-        $this->_cli->write("  load-genres");
+        $this->_cli->write("  load-genres   Generates genre cache based on genre metadata");
+        $this->_cli->write("  load-songs    Generates songs cache with all the audio files' metadata");
 
     }
 
@@ -128,7 +129,7 @@ class WunderhornCLI {
     }
 
     /**
-     * Function for parsing contents using ffmpeg.
+     * Loads genre information and caches it in file cache.
      *
      * @return void
      */
@@ -183,6 +184,90 @@ class WunderhornCLI {
 
     }
 
+    /**
+     * Retrieves and caches all audio files' metadata and other relevant
+     * information about the songs.
+     *
+     * @return void
+     */
+    protected function loadSongs() {
+
+        $files = $this->listFiles(['mp3', 'ogg', 'opus']);
+
+        $songInfo = [];
+        foreach ($files as $file) {
+
+            $curSongInfo = [
+                "filename" => $file,
+                "metadata" => [],
+            ];
+
+            $this->_cli->write(PHP_EOL . "Loading song information for {$file}");
+
+            // Parse metadata
+
+            $parsed = explode(PHP_EOL, shell_exec("ffprobe -i " . escapeshellarg("{$this->_dataFolder}/$file") . " -show_format 2>/dev/null |  grep TAG"));
+
+            foreach ($parsed as $line) {
+
+                if (empty($line)) continue;
+
+                $lineParts = explode("=", $line);
+                $key   = str_replace("TAG:", "", $lineParts[0]);
+                $value = $lineParts[1];
+
+                if (empty($key) || empty($value)) continue;
+
+                // Fix some values
+                if ($key === "TIT3") $key = "title";
+
+                $curSongInfo["metadata"][$key] = $value;
+            }
+
+            // Get reference to other files
+
+            $fileBaseName = substr($file, 0, strrpos($file, pathinfo($file, PATHINFO_EXTENSION)));
+            $curSongInfo["filename_base"] = $fileBaseName;
+
+            // Get thumbnail
+
+            $thumb = $fileBaseName . "jpg";
+
+            // If genre artwork doesn't exist, extract it from file.
+            if (!file_exists("{$this->_dataFolder}/{$thumb}")) {
+
+                $this->_cli->write("Extracting album artwork for file {$file}");
+                exec("ffmpeg -i " . escapeshellarg("{$this->_dataFolder}/{$file}") . " " . escapeshellarg("{$this->_dataFolder}/{$thumb}"));
+                chmod("{$this->_dataFolder}/{$thumb}", 0644);
+
+            }
+            $curSongInfo["thumb"] = $thumb;
+
+            // Check for webvtt
+            if (!file_exists("{$this->_dataFolder}/{$fileBaseName}.webvtt")) {
+                $curSongInfo["transcript"] = true;
+                $this->_cli->write("{$file} has a transcript");
+            }
+            else $curSongInfo["transcript"] = false;
+
+            // Check for comments
+            $folder = pathinfo("{$this->_dataFolder}/{$file}", PATHINFO_DIRNAME);
+            $curSongInfo["comments"] = [];
+            if (is_dir("{$folder}/comments")) {
+                $curSongInfo["comments"] = array_diff(scandir("{$folder}/comments"), ['.', '..']);
+                $curSongInfo["comments"] = str_replace(".webvtt", "", $curSongInfo["comments"]);
+                $this->_cli->write("{$file} has the following comments streams");
+            }
+            else $curSongInfo["transcript"] = false;
+
+            $songInfo[$file] = $curSongInfo;
+
+        }
+
+        $this->toCache("songs.json", json_encode($songInfo, JSON_PRETTY_PRINT));
+
+    }
+
     /*
      *
      * Interface
@@ -200,6 +285,9 @@ class WunderhornCLI {
 
         if (in_array("load-genres", $argv)) {
             $this->loadGenres();
+        }
+        else if (in_array("load-songs", $argv)) {
+            $this->loadSongs();
         }
         else $this->printDefaultOutput();
 

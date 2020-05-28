@@ -148,3 +148,24 @@ main.loading { position: relative; min-height: 50vh; }
     .entry-about img { margin-top: .5em; }
     .entry-about > div { white-space: pre-wrap; }
 }
+
+/*
+ * List with images on the left.
+ */
+
+.list-image-table           { display: table; width: 100%; }
+.list-image-table > *       { display: table-row; transition: background .4s; }
+.list-image-table > *:focus,
+.list-image-table > *:hover { background: #D6D6D6; border-radius: 4px; }
+
+.list-image-table > * > *   { display: table-cell;
+    padding: .5em; vertical-align: middle;
+    border-bottom: 1px solid #D6D6D6; }
+.list-image-table-entry-hl > span { display: block; }
+.list-image-table-entry-hl > span:first-child { font-weight: bold; }
+
+.list-image-table > * > *:first-child  { border-bottom-width: 0; border-radius: 4px 0 0 4px;
+    text-align: center; }
+.list-image-table img       { max-width: 60px; max-height: 60px; object-fit: cover;
+    margin: auto auto;
+    border-radius: 4px; }

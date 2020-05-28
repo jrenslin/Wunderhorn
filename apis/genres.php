@@ -1,6 +1,6 @@
 <?PHP
 /**
- * Start page of simple music browser.
+ * API for loading the cached genre list and manipulating it slightly.
  *
  * @author Joshua Ramon Enslin <joshua@museum-digital.de>
  */

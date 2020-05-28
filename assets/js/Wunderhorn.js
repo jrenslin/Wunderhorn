@@ -44,7 +44,42 @@ class Wunderhorn {
         this._lang = document.documentElement.lang;
 
         this._container = document.getElementsByTagName("main")[0];
-        this._containerOrigin = document.getElementsByTagName("main")[0];
+
+    }
+
+    loadGenreInfo(func) {
+
+        let app = this;
+
+        this.queryPage("/api/genres", function (resRequest) {
+
+                let elements;
+                if (typeof resRequest.response === "string" || resRequest.response instanceof String) elements = JSON.parse(resRequest.response);
+                else elements = resRequest.response;
+
+                app._genres = elements;
+
+                func();
+
+        }, "json");
+
+    }
+
+    loadSongInfo(func) {
+
+        let app = this;
+
+        this.queryPage("/api/songs", function (resRequest) {
+
+                let elements;
+                if (typeof resRequest.response === "string" || resRequest.response instanceof String) elements = JSON.parse(resRequest.response);
+                else elements = resRequest.response;
+
+                app._songs = elements;
+
+                func();
+
+        }, "json");
 
     }
 
@@ -79,12 +114,20 @@ class Wunderhorn {
 
     drawLoadingPage() {
 
+        if (this._containerOrigin === null) {
+            this._containerOrigin = document.getElementsByTagName("main")[0].innerHTML;
+        }
+
         this._container.classList.add("loading");
         this.emptyElement(this._container);
 
     }
 
     emptyElement(elem) {
+
+        if (this._debug === true) {
+            console.log("Emptying element");
+        }
 
         while (elem.lastElementChild) {
             elem.removeChild(elem.lastElementChild);
@@ -103,6 +146,12 @@ class Wunderhorn {
         let app = this;
 
         function drawTheGenrePage() {
+
+            if (app._debug === true) {
+                console.log("Drawing the genre page");
+            }
+
+            app._container.classList.remove("loading");
 
             let headline = document.createElement("h1");
             headline.textContent = "Genres"; // String literal
@@ -143,24 +192,15 @@ class Wunderhorn {
 
         }
 
+        window.history.pushState('page2', 'Genres', '/genres');// String literal on arg 2
         if (this._genres !== null) {
             drawTheGenrePage();
         }
-
-        // window.history.pushState('page2', 'Genres', '/genres');// String literal on arg 2
-
-        this.queryPage("/api/genres", function (resRequest) {
-
-                let elements;
-                if (typeof resRequest.response === "string" || resRequest.response instanceof String) elements = JSON.parse(resRequest.response);
-                else elements = resRequest.response;
-
-                app._container.classList.remove("loading");
-                app._genres = elements;
-
+        else {
+            this.loadGenreInfo(function() {
                 drawTheGenrePage();
-
-        }, "json");
+            });
+        }
 
     }
 
@@ -168,7 +208,52 @@ class Wunderhorn {
 
         let app = this;
 
-        function drawTheGenrePage(genreName, genreData) {
+        function drawTheSingleGenreSongList() {
+
+            let songList = document.createElement("div");
+
+            let songListHl = document.createElement("h2");
+            songListHl.textContent = "Song list"; // String literal
+            songList.appendChild(songListHl);
+
+            let list = document.createElement("div");
+            list.classList.add("list-image-table");
+
+            for (let [songFile, song] of Object.entries(app._songs)) {
+
+                let listEntry = document.createElement("a");
+
+                // Add img
+                let listImgContainer = document.createElement("div");
+                let listImg = document.createElement("img");
+                listImg.src = "/data/" + song.thumb;
+                listImgContainer.appendChild(listImg);
+                listEntry.appendChild(listImgContainer);
+
+                // Add title and duration
+                let listEntryTitle = document.createElement("span");
+                listEntryTitle.classList.add("list-image-table-entry-hl");
+
+                let listEntryTitleHl = document.createElement("span");
+                listEntryTitleHl.textContent = song.metadata.title;
+                listEntryTitle.appendChild(listEntryTitleHl);
+
+                let listEntryTitleSecondary = document.createElement("span");
+                listEntryTitleSecondary.textContent = song.metadata.artist;
+                listEntryTitle.appendChild(listEntryTitleSecondary);
+
+                listEntry.appendChild(listEntryTitle);
+
+                list.appendChild(listEntry);
+
+            }
+
+            songList.appendChild(list);
+            app._container.appendChild(songList);
+
+        }
+
+        function drawTheSingleGenrePage(genreName, genreData) {
 
             window.history.pushState('page2', genreName, '/genre/' + genreName);// String literal on arg 2
             app._container.classList.remove("loading");
@@ -198,6 +283,15 @@ class Wunderhorn {
 
             app._container.appendChild(mainAboutDiv);
 
+            if (app._songs === null) {
+                app.loadSongInfo(function() {
+                    drawTheSingleGenreSongList();
+                });
+            }
+            else {
+                drawTheSingleGenreSongList();
+            }
+
         }
 
         if (this._genres === null) {
@@ -209,12 +303,12 @@ class Wunderhorn {
                     else elements = resRequest.response;
 
                 app._genres = elements;
-                drawTheGenrePage(genreName, elements[genreName]);
+                drawTheSingleGenrePage(genreName, elements[genreName]);
 
             }, "json");
 
         }
-        else drawTheGenrePage(genreName, this._genres[genreName]);
+        else drawTheSingleGenrePage(genreName, this._genres[genreName]);
 
     }
 
@@ -224,13 +318,14 @@ class Wunderhorn {
      *
      */
 
-    /**
-     * Run: Takes current page info and translates it to actions
-     */
-    run() {
+    handlePage(inputLink) {
 
-        if (location.pathname === "/") {}
-        else if (location.pathname === "/genres") {
+        if (inputLink === "/") {
+            this.drawLoadingPage();
+            this._container.classList.remove("loading");
+            this._container.innerHTML = this._containerOrigin;
+        }
+        else if (inputLink === "/genres") {
 
             if (this._debug === true) {
                 this.drawLoadingPage();
@@ -239,15 +334,50 @@ class Wunderhorn {
             }
 
         }
-        else if (location.pathname.substr(0, 7) === "/genre/") {
+        else if (inputLink.substr(0, 7) === "/genre/") {
 
             if (this._debug === true) {
                 this.drawLoadingPage();
                 console.log("Single genre page was requested");
-                this.drawSingleGenrePage(location.pathname.substr(7));
+                this.drawSingleGenrePage(inputLink.substr(7));
             }
 
         }
+        else {
+            console.error("Unknown page");
+        }
+
+    }
+
+    setupNavigationListeners() {
+
+        let app = this;
+        let navigation = document.getElementById("mainNav");
+        let navigationLinks = navigation.getElementsByTagName("a");
+
+        // Loop over navigation links
+        for (let i = 0, max = navigationLinks.length; i < max; i++) {
+
+            let navLink = navigationLinks[i];
+            let clearedHref = navLink.href.replace(location.origin, "");
+            if (clearedHref.substr(0, 1) !== "/") continue;
+
+            navLink.addEventListener('click', function(e) {
+                e.preventDefault(); e.stopPropagation();
+                app.handlePage(clearedHref);
+            });
+
+        }
+
+    }
+
+    /**
+     * Run: Takes current page info and translates it to actions
+     */
+    run() {
+
+        this.setupNavigationListeners();
+        this.handlePage(location.pathname);
 
     }
 
