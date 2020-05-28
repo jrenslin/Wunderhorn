@@ -1,0 +1,44 @@
+RewriteEngine On    # Turn on the rewriting engine
+
+# Serve manifest as manifest.webmanifest
+# RewriteRule   ^manifest.webmanifest$ home/manifest.php        [NC,L]    # Handle requests for "manifest.json"
+
+# About
+RewriteRule   ^about$         pages/about.php       [NC,L]    # Handle requests for "about"
+RewriteRule   ^genres$        index.php             [NC,L]    # Handle requests for "about"
+RewriteRule   ^api/genres$    apis/genres.php       [NC,L]    # Handle requests for "about"
+RewriteRule   ^api/genres$    apis/genres.php       [NC,L]    # Handle requests for "about"
+RewriteRule   ^genre/(.*)$    index.php             [L,QSA]
+
+
+RewriteRule   ^sitemap.xml$   pages/sitemap.php     [NC,L]    # Handle requests for "about/thanks"
+
+# APIs
+RewriteRule   ^apis/institution_map$   apis/institution_map.php  [NC,L]    # Handle requests for "apis/institution_map"
+RewriteRule   ^apis/search$   apis/search.php  [NC,L]    # Handle requests for "apis/institution_map"
+RewriteRule   ^webmention$    apis/webmention.php  [NC,L]    # Handle requests for "apis/institution_map"
+
+# Disallow access to the given subfolders
+RewriteRule ^(\.git|helpers|classes|vendor/|composer\.json|composer\.lock|cache\/(.*)/) - [F,L,NC]
+
+# Only allow GET|HEAD|POST
+RewriteCond %{REQUEST_METHOD} !^(GET|HEAD|POST|OPTIONS)
+RewriteRule .? - [F]
+
+# Disallow execution of the following types of scripts
+RemoveHandler cgi-script .pl .py .cgi .sh
+
+## MAIN DEFAULTS
+Options -Indexes
+DirectoryIndex index.php
+
+# Set deailt charset
+AddDefaultCharset UTF-8
+
+# Set content and feature security headers
+Header set X-Frame-Options "SAMEORIGIN"
+Header set Content-Security-Policy "default-src 'self'; connect-src 'self' https://*.museum-digital.org https://*.museum-digital.de; script-src 'self' https://museum-digital.jrenslin.de; img-src 'self' https://*.museum-digital.org https://*.museum-digital.info https://*.museum-digital.de https://museum-digital.jrenslin.de data: blob:; media-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-src 'self' https://museum-digital.jrenslin.de; object-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';"
+Header set Feature-Policy "midi 'none'; sync-xhr 'none'; microphone 'self'; camera 'none'; magnetometer 'self'; gyroscope 'self'; speaker *; payment 'none'; fullscreen 'self'; geolocation 'self';"
+
+ErrorDocument 403 /errorPage.php?errNo=403
+ErrorDocument 404 /errorPage.php?errNo=404
