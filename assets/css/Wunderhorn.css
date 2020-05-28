@@ -64,6 +64,9 @@ section.centered { text-align: center; }
 
 @media screen and (min-width: 65em) {
 
+    #mainNav > div { transition: transform .4s; }
+    #mainNav > .selected { transform: translateY(.5em); background: #FFF; box-shadow: 0 4px 2px -2px #D6D6D6; }
+
     #mainNav > div > div { display: none; position: absolute; right: 0; top: 100%; width: 300px;
                              background: #333; text-align: left; }
     #mainNav > div > a         { padding: .95em 1em; transition: background .4s, color .4s; }
@@ -92,6 +95,7 @@ section.centered { text-align: center; }
 
     #mainNav:hover > *    { display: block; flex: 1; min-width: 40vw; padding: 1em; font-size: 1em; }
     #mainNav:hover > div a { display: block; padding: .2em 0; }
+
 }
 
 /*

@@ -2,6 +2,7 @@
 $tl = [
     "Home" => "Home",
     "Genres" => "Genres",
+    "Overview" => "Overview",
     "Music" => "Music",
     "Transcript" => "Transcript",
     "Transcripts" => "Transcripts",

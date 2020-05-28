@@ -226,12 +226,12 @@ class WunderhornCLI {
 
             // Get reference to other files
 
-            $fileBaseName = substr($file, 0, strrpos($file, pathinfo($file, PATHINFO_EXTENSION)));
+            $fileBaseName = substr($file, 0, strrpos($file, "." . pathinfo($file, PATHINFO_EXTENSION)));
             $curSongInfo["filename_base"] = $fileBaseName;
 
             // Get thumbnail
 
-            $thumb = $fileBaseName . "jpg";
+            $thumb = $fileBaseName . ".jpg";
 
             // If genre artwork doesn't exist, extract it from file.
             if (!file_exists("{$this->_dataFolder}/{$thumb}")) {
@@ -260,7 +260,9 @@ class WunderhornCLI {
             }
             else $curSongInfo["transcript"] = false;
 
-            $songInfo[$file] = $curSongInfo;
+            $curSongInfo["mimetype"] = mime_content_type("{$this->_dataFolder}/{$file}");
+
+            $songInfo[$fileBaseName] = $curSongInfo;
 
         }
 

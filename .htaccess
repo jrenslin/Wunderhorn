@@ -4,11 +4,14 @@ RewriteEngine On    # Turn on the rewriting engine
 # RewriteRule   ^manifest.webmanifest$ home/manifest.php        [NC,L]    # Handle requests for "manifest.json"
 
 # About
-RewriteRule   ^about$         pages/about.php       [NC,L]    # Handle requests for "about"
-RewriteRule   ^genres$        index.php             [NC,L]    # Handle requests for "about"
+
 RewriteRule   ^api/genres$    apis/genres.php       [NC,L]    # Handle requests for "about"
 RewriteRule   ^api/songs$     apis/songs.php        [NC,L]    # Handle requests for "about"
+
+RewriteRule   ^genres$        index.php             [NC,L]    # Handle requests for "about"
 RewriteRule   ^genre/(.*)$    index.php             [L,QSA]
+RewriteRule   ^songs/(.*)$     index.php             [L,QSA]
+RewriteRule   ^song/(.*)$     index.php             [L,QSA]
 
 
 RewriteRule   ^sitemap.xml$   pages/sitemap.php     [NC,L]    # Handle requests for "about/thanks"

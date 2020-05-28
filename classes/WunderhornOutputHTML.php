@@ -101,6 +101,9 @@ class WunderhornOutputHTML extends WunderhornOutput {
             <div>
                 <a href="/genres">' . $this->_("Genres") . '</a>
             </div>
+            <div>
+                <a href="/songs">' . $this->_("Overview") . '</a>
+            </div>
 
         </nav>
 
