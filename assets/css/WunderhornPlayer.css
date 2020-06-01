@@ -1,0 +1,62 @@
+.WhPlayer * { box-sizing: border-box; }
+.WhPlayer { font-family: sourceSansPro, Helvetica, Sans, Arial; font-size: 1.05rem; background: rgba(0, 0, 0, .9); color: #FFF; }
+
+.WhPlayer audio { position: absolute; visibility: hidden; }
+
+.WhPlayer input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; background: #e13916;
+    outline: none; border-radius: 4px; transition: background .4s; }
+/* .slider:hover { background: ; } */
+.WhPlayer input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none;
+    width: 25px; height: 25px; background: #e13916; box-shadow: 0px 0px 1px 1px #e13916;
+    border-color: transparent; border-radius: 50%; cursor: pointer;
+    transition: border .4s; }
+.WhPlayer input[type="range"]::-moz-range-thumb { width: 20px; height: 20px;
+    background: #e13916; box-shadow: 0px 0px 1px 1px #e13916;
+    border-color: transparent; border-radius: 50%; cursor: pointer;
+    transition: box-shadow .4s; }
+.WhPlayer input[type="range"]:focus::-moz-range-thumb,
+.WhPlayer input[type="range"]:hover::-moz-range-thumb { box-shadow: 0px 0px 0px 10px rgba(255, 120, 12, .5); }
+
+.WhPlayer input:not([type="range"]) { display: inline-block; width: auto; padding: .5em 1em;
+    background: inherit; color: #D6D6D6; border: 0; border-bottom: 3px solid #424242; text-align: center; }
+
+/*
+ * Main (small) player
+ */
+.WhPlayer.WhPlayerMain { display: flex; border-radius: .2em; box-shadow: 0px 0px 2px 2px #D6D6D6; /*any color you want*/ }
+.WhPlayer.WhPlayerMain > * { display: inline-block; flex: 1; }
+
+.WhPlayerMain-image { max-width: 200px; border-top-left-radius: inherit; border-bottom-left-radius: inherit; }
+.WhPlayerMain-image img { max-width: 100%; height: 100%; border-top-left-radius: inherit; border-bottom-left-radius: inherit; transition: filter .4s; }
+
+.WhPlayer:not(.playing) img { filter: grayscale(1); }
+
+.WhPlayerMain-about { padding: .5em 1em;
+    border-top-right-radius: inherit; border-bottom-right-radius: inherit; }
+
+/* Options */
+.WhPlayer-options-separator { font-weight: bold; color: #424242; }
+
+.WhPlayer-options { display: flex; width: 100%; }
+.WhPlayer-options-left { min-width: 200px; flex: 1; }
+.WhPlayer-options-right { flex: 100; text-align: right; }
+.WhPlayer .WhPlayer-options-left > input { width: 80px; }
+
+/*
+ * Maximized
+ */
+.WhPlayerMax { position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    margin: 0 0 0 0 !important; padding: 0 0 0 0 !important;
+    background: #212121; text-align: left; }
+.WhPlayerMax > * { display: block; flex: 1; }
+
+.WhPlayerMax > header { text-align: right; }
+.WhPlayerMax > header { box-shadow: 0 5px 5px -5px #424242; }
+
+.WhPlayerMax-body { flex: 20; }
+
+
+.WhPlayerMax > footer { display: flex; box-shadow: 0 -5px 5px -5px #424242; }
+.WhPlayerMax > footer > * { display: inline-block; flex: 3; }
+.WhPlayerMax > footer .WhPlayerMain-image { max-width: 150px; }

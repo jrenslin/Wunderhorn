@@ -222,21 +222,12 @@ class Wunderhorn {
             document.documentElement.id = "page-single-song";
             document.title = song.metadata.title;
 
-            let player = document.createElement("div");
+            let player = document.createElement("section");
             player.id = "player";
             app._container.appendChild(player);
 
-            let audioElem = document.createElement("audio");
-            audioElem.setAttribute("data-meta", JSON.stringify(song));
-
-            let audioElemSrc = document.createElement("source");
-            audioElemSrc.type = song.mimetype;
-            audioElemSrc.src = "/data/" + song.filename;
-            audioElem.appendChild(audioElemSrc);
-
-            app._container.appendChild(audioElem);
-
-            let wPlayer = new WunderhornPlayer(song, player);
+            let wPlayer = new WunderhornPlayer(song, player, "/data/", app._debug);
+            wPlayer.drawMaximized();
 
         }
 

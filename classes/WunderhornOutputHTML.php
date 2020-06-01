@@ -29,6 +29,7 @@ class WunderhornOutputHTML extends WunderhornOutput {
 <html id="' . htmlspecialchars($curPageID) . '" lang="' . $this->getLang() . '">
 <head>
 
+    <script type="text/javascript" src="/assets/js/WunderhornPlayer.js"></script>
     <script type="text/javascript" src="/assets/js/Wunderhorn.js" async></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
@@ -36,9 +37,10 @@ class WunderhornOutputHTML extends WunderhornOutput {
     <link rel="shortcut icon" sizes="16x16 32x32" href="/data/img/logo/mdlogo-code-32px.png" />
     <link rel="shortcut icon" sizes="64x64" href="/data/img/logo/mdlogo-code-64px.png" />
     <link rel="apple-touch-icon" sizes="256x256" href="/data/img/logo/mdlogo-code-256px.png" />
-    <meta name="theme-color" content="#FFF" />';
+    <meta name="theme-color" content="#FFF" />
 
-        $output .= '<link rel="stylesheet" type="text/css" href="/assets/css/Wunderhorn.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/Wunderhorn.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/WunderhornPlayer.css" />
 
     <meta name="twitter:title" content="' . htmlspecialchars($pageTitle) . '" />
     <meta property="og:title" content="' . htmlspecialchars($pageTitle) . '" />
