@@ -204,6 +204,11 @@ class WunderhornCLI {
 
             $this->_cli->write(PHP_EOL . "Loading song information for {$file}");
 
+            // Get duration
+
+            $parsed = exec("ffprobe -i " . escapeshellarg("{$this->_dataFolder}/$file") . " -show_format 2>/dev/null |  grep duration");
+            $curSongInfo["duration"] = explode("=", $parsed)[1];
+
             // Parse metadata
 
             $parsed = explode(PHP_EOL, shell_exec("ffprobe -i " . escapeshellarg("{$this->_dataFolder}/$file") . " -show_format 2>/dev/null |  grep TAG"));
