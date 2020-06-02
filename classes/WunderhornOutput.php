@@ -1,6 +1,6 @@
 <?PHP
 /**
- * This file contains a generic class for generating HTML pages for the AML
+ * This file contains a generic class for generating outputs for the Wunderhorn
  * Music viewer.
  */
 declare(strict_types = 1);

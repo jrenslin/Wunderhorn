@@ -14,7 +14,7 @@ require __DIR__ . "/inc/provideEnv.php";
 $page = new WunderhornOutputHTML();
 
 // Start HTML output
-echo $page->generatePageHead("load", "load :: AML Music", "A transcript-focused music player", [$page->_("Music"), $page->_("Transcripts")]);
+echo $page->generatePageHead("load", "load :: Wunderhorn", "A transcript-focused music player", [$page->_("Music"), $page->_("Transcripts")]);
 echo $page->generatePageHeader();
 
 echo '

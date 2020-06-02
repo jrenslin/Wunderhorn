@@ -1,7 +1,6 @@
 <?PHP
 /**
- * This file contains a generic class for generating HTML pages for the AML
- * Music viewer.
+ * This file contains a generic class for JSON APIs of the Wunderhorn viewer.
  */
 declare(strict_types = 1);
 # require_once __DIR__ . "/WunderhornOutput.php";

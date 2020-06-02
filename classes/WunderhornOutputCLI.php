@@ -1,13 +1,12 @@
 <?PHP
 /**
- * This file contains a generic class for generating HTML pages for the AML
- * Music viewer.
+ * Contains a class for generating CLI outputs.
  */
 declare(strict_types = 1);
 # require_once __DIR__ . "/WunderhornOutput.php";
 
 /**
- * Class for pages.
+ * Class for CLI outputs.
  */
 class WunderhornOutputCLI extends WunderhornOutput {
 

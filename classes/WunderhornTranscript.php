@@ -1,12 +1,11 @@
 <?PHP
 /**
- * This file contains a generic class for generating HTML pages for the AML
- * Music viewer.
+ * Contains a class for handling transcripts.
  */
 declare(strict_types = 1);
 
 /**
- * Class for pages.
+ * Class for transcripts.
  */
 class WunderhornTranscript {
 
