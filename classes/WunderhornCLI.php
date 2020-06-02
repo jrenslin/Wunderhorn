@@ -249,21 +249,38 @@ class WunderhornCLI {
             $curSongInfo["thumb"] = $thumb;
 
             // Check for webvtt
-            if (!file_exists("{$this->_dataFolder}/{$fileBaseName}.webvtt")) {
+            if (file_exists("{$this->_dataFolder}/{$fileBaseName}.vtt")) {
                 $curSongInfo["transcript"] = true;
                 $this->_cli->write("{$file} has a transcript");
             }
             else $curSongInfo["transcript"] = false;
 
-            // Check for comments
             $folder = pathinfo("{$this->_dataFolder}/{$file}", PATHINFO_DIRNAME);
+            $curSongInfo["transcript_translations"] = [];
+
+            // Check for translations
+            $folderContents = array_diff(scandir($folder), [".", ".."]);
+            $fileBaseNameBase = basename($fileBaseName);
+            $fileBaseNameBaseLen = strlen($fileBaseNameBase);
+
+            foreach ($folderContents as $otherFile) {
+                if (substr($otherFile, 0, $fileBaseNameBaseLen) !== $fileBaseNameBase // Only take files with the same beginning as the base name of the main audio file.
+                    || pathinfo($otherFile, PATHINFO_EXTENSION) !== "vtt"             // Exclude non-VTT files
+                    || $otherFile === "{$fileBaseNameBase}.vtt"                       // Exclude the main translations
+                ) {
+                    continue;
+                }
+                $curSongInfo["transcript_translations"][] = substr(pathinfo($otherFile, PATHINFO_FILENAME), $fileBaseNameBaseLen + 1);
+            }
+
+            // Check for comments
             $curSongInfo["comments"] = [];
             if (is_dir("{$folder}/comments")) {
                 $curSongInfo["comments"] = array_diff(scandir("{$folder}/comments"), ['.', '..']);
-                $curSongInfo["comments"] = str_replace(".webvtt", "", $curSongInfo["comments"]);
+                $curSongInfo["comments"] = str_replace(".vtt", "", $curSongInfo["comments"]);
                 $this->_cli->write("{$file} has the following comments streams");
             }
-            else $curSongInfo["transcript"] = false;
+            else $curSongInfo["comments"] = false;
 
             $curSongInfo["mimetype"] = mime_content_type("{$this->_dataFolder}/{$file}");
 
