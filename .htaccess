@@ -5,12 +5,14 @@ RewriteEngine On    # Turn on the rewriting engine
 
 # About
 
-RewriteRule   ^api/genres$    apis/genres.php       [NC,L]    # Handle requests for "about"
-RewriteRule   ^api/songs$     apis/songs.php        [NC,L]    # Handle requests for "about"
+RewriteRule   ^api/genres$                          apis/genres.php                             [NC,L]    # Handle requests for "about"
+RewriteRule   ^api/songs$                           apis/songs.php                              [NC,L]    # Handle requests for "about"
+RewriteRule   ^api/transcript/(.*)/(.*)/(.*)$       apis/transcript.php?lang=$1&dir=$2&q=$3     [NC,L,QSA]
+RewriteRule   ^api/transcript-tl/(.*)/(.*)/(.*)$    apis/transcript-tl.php?lang=$1&dir=$2&q=$3  [NC,L,QSA]
 
 RewriteRule   ^genres$        index.php             [NC,L]    # Handle requests for "about"
 RewriteRule   ^genre/(.*)$    index.php             [L,QSA]
-RewriteRule   ^songs/(.*)$     index.php             [L,QSA]
+RewriteRule   ^songs/(.*)$    index.php             [L,QSA]
 RewriteRule   ^song/(.*)$     index.php             [L,QSA]
 
 

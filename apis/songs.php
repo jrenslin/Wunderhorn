@@ -1,6 +1,6 @@
 <?PHP
 /**
- * Start page of simple music browser.
+ * API for song information.
  *
  * @author Joshua Ramon Enslin <joshua@museum-digital.de>
  */
