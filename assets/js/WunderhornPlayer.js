@@ -1,3 +1,5 @@
+'use strict';
+
 class WunderhornPlayer {
 
     constructor(song, player, basedir, debug = false) {
@@ -8,6 +10,7 @@ class WunderhornPlayer {
         this._basedir = basedir;
         this._player = player;
         this._maxPlayer = null;
+        this._maxPlayerBody = null;
         this._audio = null;
 
         this._player.classList.add("WhPlayer");
@@ -52,7 +55,91 @@ class WunderhornPlayer {
      *
      */
 
+    /**
+     * Removes all child nodes of a DOMElement.
+     *
+     * @param DOMElement elem Element to empty.
+     *
+     * @return void
+     */
+    emptyElement(elem) {
+
+        if (this._debug === true) {
+            console.log("Emptying element");
+        }
+
+        while (elem.lastElementChild) {
+            elem.removeChild(elem.lastElementChild);
+        }
+
+    }
+
+    /**
+     * Provides a tabular overview of song metadata in a DOM node, that can be
+     * used in the maximized player.
+     *
+     * @return DOMElement
+     */
+    generateMaximizedTabMeta() {
+
+        let tabMeta = document.createElement("section");
+
+        let tabMetaHl = document.createElement("h3");
+        tabMetaHl.textContent = "Meta";                 // TODO: String literal
+        tabMeta.appendChild(tabMetaHl);
+
+        let metaTable = document.createElement("table");
+
+        function generateSimpleTableRow(thText, tdText) {
+
+            let tr = document.createElement("tr");
+
+            let th = document.createElement("th");
+            th.textContent = thText;
+            tr.appendChild(th);
+
+            let td = document.createElement("td");
+            td.textContent = tdText;
+            tr.appendChild(td);
+
+            return tr;
+
+        }
+
+        // TODO: String literals
+        if (this._song.metadata.title !== undefined) {
+            metaTable.appendChild(generateSimpleTableRow("Title", this._song.metadata.title));
+        }
+        if (this._song.metadata.artist !== undefined) {
+            metaTable.appendChild(generateSimpleTableRow("Artist", this._song.metadata.artist));
+        }
+        if (this._song.metadata.album !== undefined) {
+            metaTable.appendChild(generateSimpleTableRow("Album", this._song.metadata.album));
+        }
+        if (this._song.metadata.date !== undefined) {
+            metaTable.appendChild(generateSimpleTableRow("Date", this._song.metadata.date));
+        }
+        if (this._song.metadata.publisher !== undefined) {
+            metaTable.appendChild(generateSimpleTableRow("Publisher", this._song.metadata.publisher));
+        }
+        if (this._song.metadata.genre !== undefined) {
+            metaTable.appendChild(generateSimpleTableRow("Genre", this._song.metadata.genre));
+        }
+
+        tabMeta.appendChild(metaTable);
+
+        this._maxPlayerBody.appendChild(tabMeta);
+
+    }
+
+    /**
+     * Central function for generating and drawing the maximized player.
+     *
+     * @return void
+     */
     drawMaximized() {
+
+        let app = this;
 
         this._maxPlayer = document.createElement("section");
         this._maxPlayer.classList.add("WhPlayer");
@@ -63,9 +150,17 @@ class WunderhornPlayer {
         this._maxPlayer.appendChild(maxPlayerHeader);
 
         // Body
-        let maxPlayerBody = document.createElement("div");
-        maxPlayerBody.classList.add("WhPlayerMax-body");
-        this._maxPlayer.appendChild(maxPlayerBody);
+        this._maxPlayerBody = document.createElement("div");
+        this._maxPlayerBody.classList.add("WhPlayerMax-body");
+        this._maxPlayer.appendChild(this._maxPlayerBody);
+
+        let headerOptionMeta = document.createElement("a");
+        headerOptionMeta.textContent = "Meta"; // TODO: String literal
+        headerOptionMeta.addEventListener('click', function(e) {
+            app.emptyElement(app._maxPlayerBody);
+            app.generateMaximizedTabMeta();
+        });
+        maxPlayerHeader.appendChild(headerOptionMeta);
 
         // Footer
         let maxPlayerFooter = document.createElement("footer");

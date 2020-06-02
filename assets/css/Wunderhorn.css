@@ -20,7 +20,7 @@ figure     { margin: 0; padding: 0; }
 
 /* Headlines */
 
-h3:first-child { font-size: 1.25em; }
+h3 { font-size: 1.25em; }
 
 /* Tables */
 table    { border-collapse: collapse; }

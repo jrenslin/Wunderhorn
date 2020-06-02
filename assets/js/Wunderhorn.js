@@ -1,3 +1,5 @@
+'use strict';
+
 class Wunderhorn {
 
     constructor(debug = false) {
@@ -123,6 +125,13 @@ class Wunderhorn {
 
     }
 
+    /**
+     * Removes all child nodes of a DOMElement.
+     *
+     * @param DOMElement elem Element to empty.
+     *
+     * @return void
+     */
     emptyElement(elem) {
 
         if (this._debug === true) {
