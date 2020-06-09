@@ -26,7 +26,8 @@ class WunderhornOutput {
     private function lang_getfrombrowser(array $allowed_languages, string $default_language, bool $strict_mode = true):string {
 
         // $_SERVER['HTTP_ACCEPT_LANGUAGE'] verwenden, wenn keine Sprachvariable mitgegeben wurde
-        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) $lang_variable = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        if (isset($_GET['lang'])) $lang_variable = $_GET['lang'];
+        else if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) $lang_variable = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
         else if (PHP_SAPI === 'cli') {
             $lang_variable = substr(getEnv("LANG"), 2);
         }

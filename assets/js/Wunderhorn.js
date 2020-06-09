@@ -99,6 +99,7 @@ class Wunderhorn {
         let request = new XMLHttpRequest();
         request.open('GET', url);
         request.setRequestHeader("Cache-Control", "no-cache");
+        request.setRequestHeader("Accept-Language", this._lang);
         request.responseType = respType;
         request.send();
         request.onload = function() {
