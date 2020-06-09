@@ -131,7 +131,7 @@ class WunderhornOutput {
      */
     function __construct() {
 
-        $availableLangs = array_diff(scandir(__DIR__ . "/../translations/general/"), [".", ".."]);
+        $availableLangs = str_replace(".php", "", array_diff(scandir(__DIR__ . "/../translations/general/"), [".", ".."]));
         $this->_lang = $this->lang_getfrombrowser($availableLangs, "en");
 
         include __DIR__ . "/../translations/general/{$this->_lang}.php";
