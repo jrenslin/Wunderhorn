@@ -4,7 +4,7 @@ class WunderhornPlayer {
 
     constructor(song, player, basedir, debug = false) {
 
-        let _lang;
+        this._lang = document.documentElement.getAttribute("lang");
         this._debug = debug;
         this._song  = song;
         this._basedir = basedir;
@@ -12,6 +12,12 @@ class WunderhornPlayer {
         this._maxPlayer = null;
         this._maxPlayerBody = null;
         this._audio = null;
+
+        this._transcript = null;
+        this._transcript_translated = null;
+
+        this.loadTranscript();
+        this.loadTranscriptTL();
 
         this._player.classList.add("WhPlayer");
         this._player.classList.add("WhPlayerMain");
@@ -26,6 +32,99 @@ class WunderhornPlayer {
         this._player.appendChild(this._audio);
 
         this.drawMainPlayer();
+
+    }
+
+    /*
+     *
+     * Loading more information
+     *
+     */
+
+    /**
+     * Function queryPage queries a web page and runs the specified function over the output.
+     *
+     * @param string   url      URL to query.
+     * @param function func     Callback function to run on the request after loading.
+     * @param string   respType Response type. Optional. Defaults to "htm".
+     *
+     * @return boolean
+     */
+    queryPage(url, func, respType = "htm") {
+
+        let request = new XMLHttpRequest();
+        request.open('GET', url);
+        request.setRequestHeader("Cache-Control", "no-cache");
+        request.responseType = respType;
+        request.send();
+        request.onload = function() {
+            func(request);
+        };
+
+    }
+
+    loadTranscript(func = null) {
+
+        // Only do anything if transcript hasn't been loaded yet
+        if (this._transcript === null) {
+
+            let app = this;
+            this.queryPage(app._song.transcript, function (resRequest) {
+
+                let elements;
+                if (typeof resRequest.response === "string" || resRequest.response instanceof String) elements = JSON.parse(resRequest.response);
+                else elements = resRequest.response;
+
+                app._transcript = elements;
+
+                if (func !== null) {
+                    func();
+                }
+
+            }, "json");
+
+        }
+        else {
+            if (func !== null) {
+                func();
+            }
+        }
+
+    }
+
+    loadTranscriptTL(func = null) {
+
+        // Only do anything if transcript hasn't been loaded yet
+        if (this._transcript_translated === null) {
+
+            let app = this;
+
+            if (this._song.transcript_translated[this._lang] !== undefined && this._song.transcript_translated[this._lang] !== null) {
+
+                this.queryPage(app._song.transcript, function (resRequest) {
+
+                    let elements;
+                    if (typeof resRequest.response === "string" || resRequest.response instanceof String) elements = JSON.parse(resRequest.response);
+                    else elements = resRequest.response;
+
+                    app._transcript_translated = elements;
+
+                    if (func !== null) {
+                        func();
+                    }
+
+                }, "json");
+
+            }
+            else if (func !== null) {
+                func();
+            }
+
+        }
+        else if (func !== null) {
+            func();
+        }
+
 
     }
 
@@ -133,6 +232,108 @@ class WunderhornPlayer {
     }
 
     /**
+     * Creates transcript tab
+     *
+     */
+    generateMaximizedTabTranscript() {
+
+        // Thanks to Tejas Shah on stack overflow:
+        // https://stackoverflow.com/a/31987330
+        function scrollTo(element, to, duration) {
+            if (duration <= 0) return;
+            var difference = to - element.scrollTop;
+            var perTick = difference / duration * 10;
+
+            setTimeout(function() {
+                element.scrollTop = element.scrollTop + perTick;
+                if (element.scrollTop === to) return;
+                scrollTo(element, to, duration - 10);
+            }, 10);
+        }
+
+
+        let app = this;
+
+        let transcriptTab = document.createElement("section");
+
+        let transcriptLines = document.createElement("ul");
+        transcriptLines.classList = "WhPlayerTranscriptLines";
+        transcriptTab.appendChild(transcriptLines);
+
+        function drawTranscriptLines() {
+
+            for (let i = 0, max = app._transcript.length; i < max; i++) {
+
+                let lineData = app._transcript[i];
+
+                let li = document.createElement("li");
+                li.id = "transcriptLine" + lineData.start_ms;
+                li.textContent = lineData.text;
+
+                if (app._transcript_translated !== null && app._transcript_translated[i] !== undefined) {
+
+                    let lineTL = document.createElement("span");
+                    lineTL.classList.add("WhPlayerTranscriptTL");
+                    lineTL.textContent = app._transcript_translated[i].text;
+                    li.appendChild(lineTL);
+
+                }
+
+                transcriptLines.appendChild(li);
+
+            }
+
+            // Bind scrolling
+            let lastTime = 0;
+            let lastElem = 0;
+            app._audio.addEventListener('timeupdate', (event) => {
+
+                let currentTimeMs = Math.round(app._audio.currentTime * 1000);
+                lastTime = currentTimeMs;
+
+                if (app._transcript[0].start_ms > currentTimeMs) return;
+
+                let currentElem;
+                for (let i = 0, max = app._transcript.length; i < max; i++) {
+
+                    let lineData = app._transcript[i];
+                    if (lineData.start_ms < currentTimeMs && currentTimeMs < lineData.end_ms) {
+                        currentElem = i;
+                        break;
+                    }
+
+                }
+
+				// Make this the selected transcript line
+				if (lastElem !== currentElem || lastElem === 0) {
+
+					let target = document.getElementById("transcriptLine" + app._transcript[currentElem].start_ms);
+					let selectedThusFar = document.getElementsByClassName("WhPlayerSelectedTranscriptLine")[0];
+					if (selectedThusFar !== undefined && selectedThusFar !== null) {
+						selectedThusFar.classList.remove("WhPlayerSelectedTranscriptLine");
+					}
+					target.classList.add("WhPlayerSelectedTranscriptLine");
+
+					scrollTo(transcriptLines, target.offsetTop - 200, 250);
+					lastElem = currentElem;
+
+				}
+
+            });
+
+        }
+
+        function completeLoadingTranscript() {
+            app.loadTranscriptTL(drawTranscriptLines);
+        }
+
+        this.loadTranscript(completeLoadingTranscript);
+
+        this._maxPlayerBody.appendChild(transcriptTab);
+
+    }
+
+    /**
      * Central function for generating and drawing the maximized player.
      *
      * @return void
@@ -140,6 +341,8 @@ class WunderhornPlayer {
     drawMaximized() {
 
         let app = this;
+
+        console.log(this._song);
 
         this._maxPlayer = document.createElement("section");
         this._maxPlayer.classList.add("WhPlayer");
@@ -154,6 +357,14 @@ class WunderhornPlayer {
         this._maxPlayerBody.classList.add("WhPlayerMax-body");
         this._maxPlayer.appendChild(this._maxPlayerBody);
 
+        let headerOptionTranscript = document.createElement("a");
+        headerOptionTranscript.textContent = "Transcript"; // TODO: String literal
+        headerOptionTranscript.addEventListener('click', function(e) {
+            app.emptyElement(app._maxPlayerBody);
+            app.generateMaximizedTabTranscript();
+        });
+        maxPlayerHeader.appendChild(headerOptionTranscript);
+
         let headerOptionMeta = document.createElement("a");
         headerOptionMeta.textContent = "Meta"; // TODO: String literal
         headerOptionMeta.addEventListener('click', function(e) {
@@ -161,6 +372,9 @@ class WunderhornPlayer {
             app.generateMaximizedTabMeta();
         });
         maxPlayerHeader.appendChild(headerOptionMeta);
+
+        // Default: Transcript view
+        this.generateMaximizedTabTranscript();
 
         // Footer
         let maxPlayerFooter = document.createElement("footer");

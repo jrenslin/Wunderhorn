@@ -45,18 +45,28 @@
 /*
  * Maximized
  */
-.WhPlayerMax { position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+.WhPlayerMax { position: absolute; left: 0; top: 0; width: 100%; min-height: 100%;
     display: flex; flex-direction: column;
     margin: 0 0 0 0 !important; padding: 0 0 0 0 !important;
     background: #212121; text-align: left; }
 .WhPlayerMax > * { display: block; flex: 1; }
 
-.WhPlayerMax > header { text-align: right; }
+.WhPlayerMax > header { text-align: right; flex: 1; min-height: 3rem; max-height: 3rem; }
 .WhPlayerMax > header { box-shadow: 0 5px 5px -5px #424242; }
 
-.WhPlayerMax-body { flex: 20; }
+.WhPlayerMax-body { flex: 20; max-height: calc(100vh - 150px - 3rem - 9px); }
+.WhPlayerMax-body > section { display: inline-block; height: 100%; }
 
-
-.WhPlayerMax > footer { display: flex; box-shadow: 0 -5px 5px -5px #424242; }
+.WhPlayerMax > footer { display: flex; background: #212121; box-shadow: 0 -5px 5px -5px #424242; min-height: 150px; max-height: 150px; }
 .WhPlayerMax > footer > * { display: inline-block; flex: 3; }
-.WhPlayerMax > footer .WhPlayerMain-image { max-width: 150px; }
+.WhPlayerMax > footer .WhPlayerMain-image { max-width: 150px; max-height: 150px; }
+
+/*
+ * Transcript.
+ */
+.WhPlayerTranscriptLines { display: block; height: inherit; max-height: calc(100vh - 150px - 3rem - 9px);
+    margin: 0 0; padding: 30vh 0; list-style: none; overflow-y: auto; font-size: 1.2em; line-height: 1.2em; }
+.WhPlayerTranscriptLines > li { display: block; padding: .5em 0; transition: padding .4s, box-shadow .6s, background .6s; }
+.WhPlayerTranscriptTL { display: block; margin: 0; padding: 0; color: #e13916; }
+
+.WhPlayerTranscriptLines > li.WhPlayerSelectedTranscriptLine { padding: 2em 0 2em .5em; background: rgba(0,0,0,.2); box-shadow: 0 5px 5px -5px #424242, 0 -5px 5px -5px #424242; }

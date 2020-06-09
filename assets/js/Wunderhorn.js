@@ -73,13 +73,13 @@ class Wunderhorn {
 
         this.queryPage("/api/songs", function (resRequest) {
 
-                let elements;
-                if (typeof resRequest.response === "string" || resRequest.response instanceof String) elements = JSON.parse(resRequest.response);
-                else elements = resRequest.response;
+            let elements;
+            if (typeof resRequest.response === "string" || resRequest.response instanceof String) elements = JSON.parse(resRequest.response);
+            else elements = resRequest.response;
 
-                app._songs = elements;
+            app._songs = elements;
 
-                func();
+            func();
 
         }, "json");
 
@@ -90,7 +90,6 @@ class Wunderhorn {
      *
      * @param string   url      URL to query.
      * @param function func     Callback function to run on the request after loading.
-     * @param boolean  debug    Enable / disable debug mode. Optional.
      * @param string   respType Response type. Optional. Defaults to "htm".
      *
      * @return boolean
@@ -224,6 +223,19 @@ class Wunderhorn {
 
             let song = app._songs[identifier];
 
+            // Manipulate song information
+            if (song.transcript === true) {
+                song.transcript = "/api/transcript/en/" + identifier;
+            }
+
+            song.transcript_translated = {};
+            for (let i = 0, max = song.transcript_translations.length; i < max; i++) {
+                let transcript_lang = song.transcript_translations[i];
+                song.transcript_translated[transcript_lang] = "/api/transcript-tl/" + transcript_lang + "/" + identifier;
+            }
+            delete song.transcript_translations;
+
+            // Set appropriate page information
             window.history.pushState('page2', song.metadata.title, '/song/' + identifier);// String literal on arg 2
             app.setNavSelected("/songs");
             app._container.classList.remove("loading");
