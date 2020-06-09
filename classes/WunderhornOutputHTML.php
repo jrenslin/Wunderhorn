@@ -29,7 +29,7 @@ class WunderhornOutputHTML extends WunderhornOutput {
 <html id="' . htmlspecialchars($curPageID) . '" lang="' . $this->getLang() . '">
 <head>
 
-    <script type="text/javascript" src="/assets/js/WunderhornPlayer.js"></script>
+    <script type="text/javascript" src="/lib/WunderhornPlayer/js/WunderhornPlayer.js"></script>
     <script type="text/javascript" src="/assets/js/Wunderhorn.js" async></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
@@ -40,7 +40,7 @@ class WunderhornOutputHTML extends WunderhornOutput {
     <meta name="theme-color" content="#FFF" />
 
     <link rel="stylesheet" type="text/css" href="/assets/css/Wunderhorn.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/WunderhornPlayer.css" />
+    <link rel="stylesheet" type="text/css" href="/lib/WunderhornPlayer/css/WunderhornPlayer.css" />
 
     <meta name="twitter:title" content="' . htmlspecialchars($pageTitle) . '" />
     <meta property="og:title" content="' . htmlspecialchars($pageTitle) . '" />
