@@ -215,6 +215,79 @@ class Wunderhorn {
 
     }
 
+    drawSongsPage() {
+
+        let app = this;
+
+        function drawTheSongsPage() {
+
+            if (app._debug === true) {
+                console.log("Drawing the song overview page");
+            }
+
+            app._container.classList.remove("loading");
+
+            document.documentElement.id = "page-songs";
+            document.title = "Songs"; // String literal
+
+            let headline = document.createElement("h1");
+            headline.textContent = "Songs"; // String literal
+            app._container.appendChild(headline);
+
+            let list = document.createElement("div");
+            list.classList.add("list-image-table");
+
+            for (let [songFile, song] of Object.entries(app._songs)) {
+
+                let listEntry = document.createElement("a");
+
+                // Add img
+                let listImgContainer = document.createElement("div");
+                let listImg = document.createElement("img");
+                listImg.src = "/data/" + song.thumb;
+                listImgContainer.appendChild(listImg);
+                listEntry.appendChild(listImgContainer);
+
+                // Add title and duration
+                let listEntryTitle = document.createElement("span");
+                listEntryTitle.classList.add("list-image-table-entry-hl");
+
+                let listEntryTitleHl = document.createElement("span");
+                listEntryTitleHl.textContent = song.metadata.title;
+                listEntryTitle.appendChild(listEntryTitleHl);
+
+                let listEntryTitleSecondary = document.createElement("span");
+                listEntryTitleSecondary.textContent = song.metadata.artist;
+                listEntryTitle.appendChild(listEntryTitleSecondary);
+
+                listEntry.appendChild(listEntryTitle);
+
+                list.appendChild(listEntry);
+
+                listEntry.addEventListener('click', function(e) {
+                    e.preventDefault(); e.stopPropagation();
+                    app.drawLoadingPage();
+                    app.drawSingleSongPage(songFile);
+                });
+
+            }
+
+            app._container.appendChild(list);
+
+        }
+
+        window.history.pushState('page2', 'Songs', '/songs');// String literal on arg 2
+        if (this._songs !== null) {
+            drawTheSongsPage();
+        }
+        else {
+            this.loadSongInfo(function() {
+                drawTheSongsPage();
+            });
+        }
+
+    }
+
     drawSingleSongPage(identifier) {
 
         let app = this;
@@ -236,6 +309,7 @@ class Wunderhorn {
             delete song.transcript_translations;
 
             // Set appropriate page information
+            let previousPage = location.href;
             window.history.pushState('page2', song.metadata.title, '/song/' + identifier);// String literal on arg 2
             app.setNavSelected("/songs");
             app._container.classList.remove("loading");
@@ -249,6 +323,9 @@ class Wunderhorn {
 
             let wPlayer = new WunderhornPlayer(song, player, "/data/", app._debug);
             wPlayer.drawMaximized();
+            wPlayer._maxPlayer.addEventListener('WunderhornMaxPlayerMinimization', function(e) {
+                location.href = previousPage;
+            });
 
         }
 
@@ -440,6 +517,16 @@ class Wunderhorn {
                 this.drawLoadingPage();
                 console.log("Single genre page was requested");
                 this.drawSingleGenrePage(inputLink.substr(7));
+            }
+
+        }
+        else if (inputLink === "/songs") {
+
+            if (this._debug === true) {
+                this.setNavSelected("/songs");
+                this.drawLoadingPage();
+                console.log("Song overview page was requested");
+                this.drawSongsPage();
             }
 
         }

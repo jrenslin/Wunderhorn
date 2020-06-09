@@ -12,7 +12,7 @@ RewriteRule   ^api/transcript-tl/(.*)/(.*)/(.*)$    apis/transcript-tl.php?lang=
 
 RewriteRule   ^genres$        index.php             [NC,L]    # Handle requests for "about"
 RewriteRule   ^genre/(.*)$    index.php             [L,QSA]
-RewriteRule   ^songs/(.*)$    index.php             [L,QSA]
+RewriteRule   ^songs$         index.php             [L,QSA]
 RewriteRule   ^song/(.*)$     index.php             [L,QSA]
 
 
