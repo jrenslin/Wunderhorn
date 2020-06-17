@@ -9,6 +9,8 @@ class Wunderhorn {
         this._genres    = null;
         this._songs     = null;
         this._container = null;
+        this._translations = null;
+        this.loadTranslations();
 
         this._containerOrigin = null;
 
@@ -49,6 +51,23 @@ class Wunderhorn {
 
     }
 
+    loadTranslations(func) {
+
+        let app = this;
+
+        this.queryPage("/api/translations", function (resRequest) {
+
+                let elements;
+                if (typeof resRequest.response === "string" || resRequest.response instanceof String) elements = JSON.parse(resRequest.response);
+                else elements = resRequest.response;
+                app._translations = elements;
+
+                if (func !== undefined) func();
+
+        }, "json");
+
+    }
+
     loadGenreInfo(func) {
 
         let app = this;
@@ -82,6 +101,33 @@ class Wunderhorn {
             func();
 
         }, "json");
+
+    }
+
+    /**
+     * Translation function.
+     *
+     * @param {string} toTranslate String to translate.
+     *
+     * @return string
+     */
+    _(toTranslate) {
+
+        let app = this;
+
+        function getTranslation(toTranslate) {
+            if (app._translations[toTranslate] !== undefined) return app._translations[toTranslate];
+            else console.error("There is no registered translation of: '" + toTranslate + "'");
+        }
+
+        if (this._translations !== null) {
+            return getTranslation(toTranslate);
+        }
+        else {
+            this.loadTranslations(function(e) {
+                return getTranslation(toTranslate);
+            });
+        }
 
     }
 
@@ -163,10 +209,10 @@ class Wunderhorn {
             app._container.classList.remove("loading");
 
             document.documentElement.id = "page-genres";
-            document.title = "Genres"; // String literal
+            document.title = app._("Genres");
 
             let headline = document.createElement("h1");
-            headline.textContent = "Genres"; // String literal
+            headline.textContent = app._("Genres");
             app._container.appendChild(headline);
 
             let list = document.createElement("div");
@@ -204,7 +250,7 @@ class Wunderhorn {
 
         }
 
-        window.history.pushState('page2', 'Genres', '/genres');// String literal on arg 2
+        window.history.pushState('page2', this._("Genres"), '/genres');
         if (this._genres !== null) {
             drawTheGenrePage();
         }
@@ -229,10 +275,10 @@ class Wunderhorn {
             app._container.classList.remove("loading");
 
             document.documentElement.id = "page-songs";
-            document.title = "Songs"; // String literal
+            document.title = app._("Songs");
 
             let headline = document.createElement("h1");
-            headline.textContent = "Songs"; // String literal
+            headline.textContent = app._("Songs");
             app._container.appendChild(headline);
 
             let list = document.createElement("div");
@@ -277,7 +323,7 @@ class Wunderhorn {
 
         }
 
-        window.history.pushState('page2', 'Songs', '/songs');// String literal on arg 2
+        window.history.pushState('page2', this._("Songs"), '/songs');
         if (this._songs !== null) {
             drawTheSongsPage();
         }
@@ -310,8 +356,8 @@ class Wunderhorn {
             delete song.transcript_translations;
 
             // Set appropriate page information
-            let previousPage = location.href;
-            window.history.pushState('page2', song.metadata.title, '/song/' + identifier);// String literal on arg 2
+            let previousPage = location.href + "?lang=" + app._lang;
+            window.history.pushState('page2', song.metadata.title, '/song/' + identifier);
             app.setNavSelected("/songs");
             app._container.classList.remove("loading");
 
@@ -350,7 +396,7 @@ class Wunderhorn {
             let songList = document.createElement("div");
 
             let songListHl = document.createElement("h2");
-            songListHl.textContent = "Song list"; // String literal
+            songListHl.textContent = app._("Songs");
             songList.appendChild(songListHl);
 
             let list = document.createElement("div");
@@ -398,7 +444,7 @@ class Wunderhorn {
 
         function drawTheSingleGenrePage(genreName, genreData) {
 
-            window.history.pushState('page2', genreName, '/genre/' + genreName);// String literal on arg 2
+            window.history.pushState('page2', genreName, '/genre/' + genreName);
             app._container.classList.remove("loading");
 
             document.documentElement.id = "page-single-genre";
