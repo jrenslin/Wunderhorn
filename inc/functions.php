@@ -3,7 +3,7 @@
  * This file collects generally, often used functions in the public frontend for museum-digital
  *
  * @file
- * @author Joshua Ramon Enslin <joshua@jrenslin.de>
+ * @author Joshua Ramon Enslin <jenslin@goethehaus-frankfurt.de>
  */
 declare(strict_types = 1);
 

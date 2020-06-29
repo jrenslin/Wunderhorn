@@ -2,7 +2,7 @@
 /**
  * API for loading the cached genre list and manipulating it slightly.
  *
- * @author Joshua Ramon Enslin <joshua@museum-digital.de>
+ * @author Joshua Ramon Enslin <jenslin@goethehaus-frankfurt.de>
  */
 declare(strict_types = 1);
 

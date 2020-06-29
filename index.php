@@ -2,7 +2,7 @@
 /**
  * Start page of simple music browser.
  *
- * @author Joshua Ramon Enslin <joshua@museum-digital.de>
+ * @author Joshua Ramon Enslin <jenslin@goethehaus-frankfurt.de>
  */
 declare(strict_types = 1);
 
