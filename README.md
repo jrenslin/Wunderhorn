@@ -40,6 +40,23 @@ The web app consists of a basic shell (`index.php`). All logic is handled in Jav
 
 A very basic, multi-language audio player is used for single audio files' pages and displaying transcriptions if available. It is written independently from the rest of the code, but can - for the time being - be found in this repository (`lib/WunderhornPlayer/`).
 
+## Custom Strings
+
+Custom strings, e.g. for genre names and descriptions can be entered in `translations/custom` in files using the two digit language code of the respective translation (e.g. `translations/custom/de.php` for German language translation strings). A translation file may look as follows:
+
+```
+$ cat translations/custom/de.php
+
+<?PHP
+$tl = [
+    "Podcast"             => "Podcast",
+    "Podcast_description" => "Ein Podcast ist eine Serie von meist abonnierbaren Mediendateien (Audio oder Video) über das Internet. Das Kofferwort setzt sich zusammen aus der englischen
+Rundfunkbezeichnung Broadcast und der Bezeichnung für den (zur Entstehungszeit marktbeherrschenden) tragbaren MP3-Player iPod, mit dessen Erfolg Podcasts direkt verbunden wurden.
+
+Um 2016 wurden Podcasts vor allem über Smartphones gehört. Durch die wachsende Verbreitung von Smartphones und den Erfolg einzelner Podcasts wie „Serial“ oder „Sanft & Sorgfältig“ bzw. „Fest & Flauschig“ sind Podcasts seit dem Jahr 2015 von Jahr zu Jahr populärer geworden. Ein einzelner Podcast besteht aus einer Serie (Episoden) von Medienbeiträgen (beispielsweise Mitschnitte von Radiosendungen, Interviews, automatisch vorgelesene Zeitungsartikel, Musiksendungen usw.), die über einen Web-Feed (meistens RSS) automatisch bezogen werden können. (Wikipedia (29.6.2020), CC BY-SA)",
+];
+```
+
 ## Dependencies
 
 - Apache
